@@ -9,11 +9,7 @@
 import Foundation
 class WebSocketConnector : NSObject {
     
-    var didOpenConnection : (()->())?
-    var didCloseConnection : (()->())?
     var didReceiveMessage : ((_ message : String)->())?
-    var didReceiveData : ((_ message : Data)->())?
-    //var didReceiveError : ((_ error : Error)->())?
     
     var urlSession : URLSession!
     var operationQueue : OperationQueue = OperationQueue()
@@ -25,9 +21,7 @@ class WebSocketConnector : NSObject {
     var certName : String!
     var certExtension : String!
     var certPassword : String!
-    
-    var base64CertData: String!
-        
+            
     init(urlString: String, portString: String)//withSocketURL url : URL)
     {
         super.init()
@@ -40,6 +34,10 @@ class WebSocketConnector : NSObject {
         self.urlString = urlString;
     }
     
+    
+    /*
+     
+     */
     func setCertificate(certName: String, certExtension: String, certPassword: String)
     {
         self.certName = certName;
@@ -47,17 +45,10 @@ class WebSocketConnector : NSObject {
         self.certPassword = certPassword;
     }
     
-    func setCertificate(base64CertString: String, certPassword: String)
-    {
-        self.base64CertData = base64CertString;
-        self.certPassword = certPassword;
-    }
-    
     func establishConnection(){
                 
         let message = "connecting...\n";
         
-        print(message);
         self.didReceiveMessage!(message);
         
         socket.resume();
@@ -73,7 +64,7 @@ class WebSocketConnector : NSObject {
         
         socket.send(message) { error in
             if let error = error {
-                print("WebSocket sending error: \(error)")
+                self.didReceiveMessage!("WebSocket sending error: \(error)")
             }
         }
 
@@ -85,20 +76,18 @@ class WebSocketConnector : NSObject {
         socket.receive { result in
             switch result {
             case .failure(let error):
-                print("Failed to receive message: \(error)")
                 self.didReceiveMessage!("Failed to receive message: \(error)")
             case .success(let message):
                 switch message {
                 case .string(let text):
-                    print("Received text message: \(text)")
                     self.didReceiveMessage!("Received text message: \(text)")
                 case .data(let data):
-                    print("Received binary message: \(data)")
                     self.didReceiveMessage!("Received binary message: \(data)")
                 @unknown default:
                     fatalError()
                 }
                 
+                //Keep listening for more messages
                 self.readMessage()
             }
         }
@@ -109,42 +98,37 @@ extension WebSocketConnector : URLSessionWebSocketDelegate
 {
     func urlSession(_ session: URLSession, webSocketTask: URLSessionWebSocketTask,didOpenWithProtocol protocol: String?)
     {
-        print("connected");
         self.didReceiveMessage!("connected")
     };
     
-    /*func urlSession(_ session: URLSession, webSocketTask: URLSessionWebSocketTask, didCloseWith closeCode: URLSessionWebSocketTask.CloseCode, reason: Data?)
+    func urlSession(_ session: URLSession, webSocketTask: URLSessionWebSocketTask, didCloseWith closeCode: URLSessionWebSocketTask.CloseCode, reason: Data?)
     {
-        print("disconnected");
-        self.outputLabel.text = "disconnected\n";
-    };*/
+        self.didReceiveMessage!("disconnected");
+    };
 }
 
 extension WebSocketConnector : URLSessionDelegate
 {
+    /*
+        When connecting to the server it will send an authentication challenge back which is caught and run by this function.
+     
+        The function first receives the challenge NSURLAuthenticationMethodServerTrust where it just checks the host url. Then it receives the challenge NSURLAuthenticationMethodClientCertificate where it sends back the client certificate to the server.
+     */
     func urlSession(_ session: URLSession, didReceive challenge: URLAuthenticationChallenge, completionHandler: (URLSession.AuthChallengeDisposition, URLCredential?) -> Void)
         {
             let authenticationMethod = challenge.protectionSpace.authenticationMethod
+            
     //        print("authenticationMethod=\(authenticationMethod)")
 
-            if authenticationMethod == NSURLAuthenticationMethodClientCertificate {
-                                
-                let clientCred = CertificateHandler.getClientUrlCredential(
-                                                        certName: self.certName,
-                                                        certExtension: self.certExtension,
-                                                        certPassword: self.certPassword);
-//
-//                let clientCred = CertificateHandler.getClientURLCrednetial(base64CertData: self.base64CertData, certPassword: self.certPassword);
-                
-                completionHandler(.useCredential, clientCred)
-
-            } else if authenticationMethod == NSURLAuthenticationMethodServerTrust {
-                
+            if authenticationMethod == NSURLAuthenticationMethodServerTrust
+            {
                 let protectionSpace = challenge.protectionSpace
                 guard protectionSpace.authenticationMethod == NSURLAuthenticationMethodServerTrust,
-                    protectionSpace.host.contains(self.urlString) else {
-                        completionHandler(.performDefaultHandling, nil)
-                        return
+                    protectionSpace.host.contains(self.urlString) else  //Trust the given host url
+                {
+                    //.performDefaultHandling rejects the connection
+                    completionHandler(.performDefaultHandling, nil)
+                    return
                 }
                 
                 guard let serverTrust = protectionSpace.serverTrust else {
@@ -153,6 +137,16 @@ extension WebSocketConnector : URLSessionDelegate
                 }
                 let credential = URLCredential(trust: serverTrust)
                 completionHandler(.useCredential, credential)
+            }
+            else if authenticationMethod == NSURLAuthenticationMethodClientCertificate
+            {
+                //Get the client certificate as a URLCredential object
+                let clientCred = CertificateHandler.getClientUrlCredential(
+                                                        certName: self.certName,
+                                                        certExtension: self.certExtension,
+                                                        certPassword: self.certPassword);
+                
+                completionHandler(.useCredential, clientCred)
             }
         }
 }

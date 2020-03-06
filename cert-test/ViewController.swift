@@ -69,8 +69,8 @@ class ViewController: UIViewController {
     @IBAction func websocketConnect(_ sender: Any)
     {
 
-        DispatchQueue.main.async {
-
+        DispatchQueue.main.async
+        {
             self.socket.setCertificate(certName: "created_cert", certExtension: "pfx", certPassword: "test")
             self.socket.establishConnection();
         }

@@ -15,11 +15,7 @@
 		554D475B23F6B1C600BB7EED /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 554D475923F6B1C600BB7EED /* LaunchScreen.storyboard */; };
 		554D476623F6B1C600BB7EED /* cert_testTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 554D476523F6B1C600BB7EED /* cert_testTests.swift */; };
 		554D477123F6B1C600BB7EED /* cert_testUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 554D477023F6B1C600BB7EED /* cert_testUITests.swift */; };
-		55701F14240801E800775441 /* client_cert.pfx in Resources */ = {isa = PBXBuildFile; fileRef = 55701F13240801E800775441 /* client_cert.pfx */; };
 		55A6FBD3240D16560082B9DC /* WebSocketConnector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55A6FBD2240D16560082B9DC /* WebSocketConnector.swift */; };
-		55A6FBD5240D1E9E0082B9DC /* server_cert.pfx in Resources */ = {isa = PBXBuildFile; fileRef = 55A6FBD4240D1E9E0082B9DC /* server_cert.pfx */; };
-		55A6FBD9240D32CD0082B9DC /* invalid_cert.pfx in Resources */ = {isa = PBXBuildFile; fileRef = 55A6FBD8240D32CD0082B9DC /* invalid_cert.pfx */; };
-		55A6FBEB240FA5EC0082B9DC /* testuser.p12 in Resources */ = {isa = PBXBuildFile; fileRef = 55A6FBEA240FA5EC0082B9DC /* testuser.p12 */; };
 		55A6FBED240FB1C10082B9DC /* certificateHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55A6FBEC240FB1C10082B9DC /* certificateHandler.swift */; };
 /* End PBXBuildFile section */
 
@@ -55,11 +51,7 @@
 		554D476C23F6B1C600BB7EED /* cert-testUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "cert-testUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		554D477023F6B1C600BB7EED /* cert_testUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = cert_testUITests.swift; sourceTree = "<group>"; };
 		554D477223F6B1C600BB7EED /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		55701F13240801E800775441 /* client_cert.pfx */ = {isa = PBXFileReference; lastKnownFileType = file; name = client_cert.pfx; path = ../../PPConnectionTest/certs/client_cert.pfx; sourceTree = "<group>"; };
 		55A6FBD2240D16560082B9DC /* WebSocketConnector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocketConnector.swift; sourceTree = "<group>"; };
-		55A6FBD4240D1E9E0082B9DC /* server_cert.pfx */ = {isa = PBXFileReference; lastKnownFileType = file; name = server_cert.pfx; path = ../../PPConnectionTest/certs/server_cert.pfx; sourceTree = "<group>"; };
-		55A6FBD8240D32CD0082B9DC /* invalid_cert.pfx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = invalid_cert.pfx; path = ../../PPConnectionTest/certs/invalid_cert.pfx; sourceTree = "<group>"; };
-		55A6FBEA240FA5EC0082B9DC /* testuser.p12 */ = {isa = PBXFileReference; lastKnownFileType = file; name = testuser.p12; path = ../../PPConnectionTest/certs/testuser.p12; sourceTree = "<group>"; };
 		55A6FBEC240FB1C10082B9DC /* certificateHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = certificateHandler.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -91,10 +83,6 @@
 		554D474223F6B1C300BB7EED = {
 			isa = PBXGroup;
 			children = (
-				55A6FBEA240FA5EC0082B9DC /* testuser.p12 */,
-				55A6FBD8240D32CD0082B9DC /* invalid_cert.pfx */,
-				55A6FBD4240D1E9E0082B9DC /* server_cert.pfx */,
-				55701F13240801E800775441 /* client_cert.pfx */,
 				554D474D23F6B1C300BB7EED /* cert-test */,
 				554D476423F6B1C600BB7EED /* cert-testTests */,
 				554D476F23F6B1C600BB7EED /* cert-testUITests */,
@@ -251,12 +239,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				554D475B23F6B1C600BB7EED /* LaunchScreen.storyboard in Resources */,
-				55A6FBD5240D1E9E0082B9DC /* server_cert.pfx in Resources */,
-				55A6FBD9240D32CD0082B9DC /* invalid_cert.pfx in Resources */,
-				55A6FBEB240FA5EC0082B9DC /* testuser.p12 in Resources */,
 				554D475823F6B1C600BB7EED /* Assets.xcassets in Resources */,
 				554D475623F6B1C300BB7EED /* Main.storyboard in Resources */,
-				55701F14240801E800775441 /* client_cert.pfx in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

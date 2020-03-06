@@ -17,13 +17,17 @@ struct CertificateHandler
         public var certArray:NSArray
     }
 
+    /*
+        Extract certificate to a URLCredential-object from a given base64 data string and password.
+        The URLCredential-object is what is used in the URLChallange when establishing the websocket or HTTPS connection.
+     */
     public static func getClientURLCredential(base64CertData: String, certPassword: String)->URLCredential
     {
         let localCertData: NSData = NSData(base64Encoded: base64CertData, options: .ignoreUnknownCharacters)!
         
-        let userIdentityAndTrust = extractIdentity(certData: localCertData as NSData, certPassword: certPassword)
+        let userIdentityAndTrust = extractCertificate(certData: localCertData as NSData, certPassword: certPassword)
+        
         //Create URLCredential
-                    
         let urlCredential = URLCredential(identity: userIdentityAndTrust.identityRef,
                                       certificates: userIdentityAndTrust.certArray as [AnyObject],
                                       persistence: URLCredential.Persistence.permanent)
@@ -46,7 +50,9 @@ struct CertificateHandler
         let certData = NSData(contentsOf: fileURL);
                 
         //Extract certificates from pfx-data
-        let userIdentityAndTrust = extractIdentity(certData: certData!, certPassword: certPassword)
+        
+        //If you get "unexpectedly found nil while unwrapping an Optional value: file" here the certificate could not be opened properly, check to make sure the file is present and that the password is correct
+        let userIdentityAndTrust = extractCertificate(certData: certData!, certPassword: certPassword)
                 
         //Create URLCredential
         let urlCredential = URLCredential(  identity: userIdentityAndTrust.identityRef,
@@ -56,18 +62,23 @@ struct CertificateHandler
         return urlCredential
     }
 
-    private static func extractIdentity(certData:NSData, certPassword:String) -> IdentityAndTrust {
+    /*
+        Extract the certificate from a given data object and password.
+    */
+    private static func extractCertificate(certData:NSData, certPassword:String) -> IdentityAndTrust {
 
         var identityAndTrust:IdentityAndTrust!
         var securityError:OSStatus = errSecSuccess
 
         var items: CFArray?
+
         let certOptions: Dictionary = [ kSecImportExportPassphrase as String : certPassword ];
         
         // import certificate to read its entries
         securityError = SecPKCS12Import(certData, certOptions as CFDictionary, &items);
-        if securityError == errSecSuccess {
-
+        
+        if securityError == errSecSuccess
+        {
             //Print all the certificates
             //let itemsArray = items as CFArray?;
             //print(itemsArray)
@@ -90,8 +101,10 @@ struct CertificateHandler
                 //Array with all certificates
                 let certArray:NSMutableArray = NSMutableArray();
                 
+                //Get the entire chain of certificates
                 let certEntryList:NSArray = certEntry["chain"] as! NSArray;
 
+                //Go through the list of certificates and add them all to the certArray.
                 for cert in certEntryList
                 {
                     certArray.add(cert as! SecCertificate);
